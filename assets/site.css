@@ -280,20 +280,17 @@ main {
   z-index: 1;
   width: 100%;
   max-width: 22rem;
-  aspect-ratio: 557 / 1024;
-  background: var(--surface-container-low);
-  border-radius: 1.25rem;
-  border: 1px solid var(--surface-variant);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  aspect-ratio: 474 / 988;
+  background: transparent;
+  overflow: visible;
 }
 
 .phone-screenshot {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  object-fit: contain;
+  object-position: center;
 }
 
 .phone-chips {
