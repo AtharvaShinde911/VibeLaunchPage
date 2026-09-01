@@ -1,0 +1,19 @@
+{
+  "name": "vibzee-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vibzee marketing site with account deletion API",
+  "scripts": {
+    "start": "node api/server.js",
+    "dev": "node --watch api/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb": "^6.12.0",
+    "nodemailer": "^9.1.0"
+  }
+}

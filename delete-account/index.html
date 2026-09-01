@@ -28,14 +28,29 @@
     <h1>Delete Account</h1>
     <article class="cms-content">
       <p class="updated muted"><strong>Last Updated:</strong> 1 September 2026</p>
-      <p>If you use the Vibzee mobile app and would like to delete your account, you can request account deletion using the instructions below.</p>
+      <p>If you use the Vibzee mobile app and would like to delete your account, you can submit a deletion request using the form below. Submitting this form only records your request — it does not delete your account immediately.</p>
       <h2>How to Request Account Deletion</h2>
-      <p>Users may request deletion of their Vibzee account by emailing <a href="mailto:support@spartacantech.com">support@spartacantech.com</a>.</p>
-      <p>
-        <a class="btn btn-gradient btn-sm" href="mailto:support@spartacantech.com?subject=Vibzee%20Account%20Deletion%20Request">Request Account Deletion</a>
-      </p>
+      <p>Fill out the form below to submit a deletion request. Your details will be saved for our team to review. Account deletion is processed manually after verification. You can also email <a href="mailto:support@spartacantech.com">support@spartacantech.com</a> if you prefer.</p>
+
+      <form class="delete-account-form" id="delete-account-form" novalidate>
+        <div class="form-field">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="numeric" required minlength="10" maxlength="15" placeholder="10-digit mobile number" />
+        </div>
+        <div class="form-field">
+          <label for="reason">Reason for deletion</label>
+          <textarea id="reason" name="reason" rows="4" required minlength="10" maxlength="1000" placeholder="Tell us why you want to delete your account"></textarea>
+        </div>
+        <div class="form-field hp-field" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <button class="btn btn-gradient" type="submit" id="delete-account-submit">Submit deletion request</button>
+        <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
+      </form>
+
       <h2>What Happens After Your Request</h2>
-      <p>Following a valid account-deletion request, the user's photograph stored in Vibzee's backend/cloud storage will be automatically deleted within 30 days of the request, subject to any information that Vibzee is legally required or permitted to retain.</p>
+      <p>Your request is stored securely and marked for review. Our team will verify the details and process account deletion separately. Following a verified deletion request, the user's photograph stored in Vibzee's backend/cloud storage will be deleted within 30 days, subject to any information that Vibzee is legally required or permitted to retain.</p>
       <h2>Contact</h2>
       <p>For questions about account deletion, contact us at <a href="mailto:support@spartacantech.com">support@spartacantech.com</a>.</p>
     </article>
@@ -50,6 +65,103 @@
     </nav>
     <p class="muted">&copy; <span id="year"></span> Vibzee. Made with ❤️ for India.</p>
   </footer>
+  <div class="success-modal" id="success-modal" hidden>
+    <div class="success-modal-backdrop" data-close-modal></div>
+    <div class="success-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="success-modal-title" aria-describedby="success-modal-body">
+      <div class="success-modal-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none">
+          <circle cx="24" cy="24" r="24" fill="rgba(125, 255, 176, 0.16)" />
+          <path d="M15 24.5l6 6 12-13" stroke="#7dffb0" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h2 id="success-modal-title">Request submitted</h2>
+      <p id="success-modal-body">Your deletion request has been received and saved. Our team will review it and process account deletion manually. Your account is not deleted automatically.</p>
+      <button class="btn btn-gradient" type="button" id="success-modal-close">OK</button>
+    </div>
+  </div>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    (function () {
+      const form = document.getElementById('delete-account-form');
+      const message = document.getElementById('form-message');
+      const submitBtn = document.getElementById('delete-account-submit');
+      const modal = document.getElementById('success-modal');
+      const modalBody = document.getElementById('success-modal-body');
+      const modalClose = document.getElementById('success-modal-close');
+      let lastFocus = null;
+
+      function openSuccessModal(text) {
+        lastFocus = document.activeElement;
+        modalBody.textContent = text;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        modalClose.focus();
+      }
+
+      function closeSuccessModal() {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (lastFocus && typeof lastFocus.focus === 'function') {
+          lastFocus.focus();
+        }
+      }
+
+      modalClose.addEventListener('click', closeSuccessModal);
+      modal.querySelector('[data-close-modal]').addEventListener('click', closeSuccessModal);
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) {
+          closeSuccessModal();
+        }
+      });
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        message.textContent = '';
+        message.className = 'form-message';
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        const payload = {
+          phone: form.phone.value.trim(),
+          reason: form.reason.value.trim(),
+          website: form.website.value.trim(),
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        try {
+          const response = await fetch('/api/delete-account-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json().catch(function () {
+            return {};
+          });
+
+          if (!response.ok || !data.ok) {
+            if (response.status === 404 || response.status === 501) {
+              throw new Error('Form API is not running. Start the site with: npm start');
+            }
+            throw new Error(data.error || 'Unable to submit your request. Please try again.');
+          }
+
+          form.reset();
+          openSuccessModal(data.message || 'Your deletion request has been received and saved.');
+        } catch (error) {
+          message.textContent = error.message || 'Unable to submit your request. Please email support@spartacantech.com.';
+          message.classList.add('form-message-error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit deletion request';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

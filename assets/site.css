@@ -816,6 +816,155 @@ main {
 .cms-content a { color: var(--primary); }
 .muted { color: var(--on-surface-variant); }
 
+/* Delete account form */
+.delete-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.25rem 0 1.75rem;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--surface-variant);
+  background: var(--surface-container);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--on-surface-variant);
+  opacity: 0.7;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--primary-container);
+  box-shadow: 0 0 0 3px rgba(255, 52, 205, 0.2);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.delete-account-form .btn {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+}
+
+.delete-account-form .btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-message {
+  margin: 0;
+  font-size: 0.9rem;
+  min-height: 1.25rem;
+}
+
+.form-message-success {
+  color: #7dffb0;
+}
+
+.form-message-error {
+  color: #ffb4ab;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.success-modal[hidden] {
+  display: none;
+}
+
+.success-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 16, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.success-modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 26rem);
+  padding: 2rem 1.5rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--surface-variant);
+  background: var(--surface-container);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.success-modal-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.success-modal-dialog h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.success-modal-dialog p {
+  margin: 0 0 1.5rem;
+  color: var(--on-surface-variant);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.success-modal-dialog .btn {
+  min-width: 7rem;
+}
+
 /* Footer */
 .site-footer {
   padding: 2rem 1.5rem;
