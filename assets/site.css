@@ -82,7 +82,7 @@ a:hover { text-decoration: underline; }
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -101,18 +101,41 @@ a:hover { text-decoration: underline; }
 .brand img {
   display: block;
   height: auto;
-  max-height: 36px;
+  max-height: 56px;
   width: auto;
 }
 
-.site-header nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
-.site-header nav a {
-  color: var(--on-surface-variant);
-  font-size: 0.95rem;
-  font-weight: 500;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
-.site-header nav a:hover { color: var(--primary); text-decoration: none; }
-.site-header nav a[aria-current="page"] { color: var(--primary); font-weight: 700; }
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  flex-wrap: wrap;
+}
+
+.header-nav a {
+  color: var(--on-surface-variant);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.header-nav a:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.header-nav a[aria-current="page"] {
+  color: var(--primary);
+  font-weight: 700;
+}
 
 /* Buttons */
 .btn {
@@ -224,7 +247,7 @@ main {
 
 .hero-logo-desktop {
   display: none;
-  max-width: 128px;
+  max-width: 176px;
   height: auto;
   margin-bottom: 1.5rem;
   filter: drop-shadow(0 4px 16px rgba(255, 52, 205, 0.2));
@@ -280,7 +303,7 @@ main {
   z-index: 1;
   width: 100%;
   max-width: 22rem;
-  aspect-ratio: 474 / 988;
+  aspect-ratio: 456 / 1000;
   background: transparent;
   overflow: visible;
 }
@@ -445,10 +468,30 @@ main {
   margin-bottom: 0.75rem;
   box-shadow: var(--shadow-soft);
   background: var(--surface-container-high);
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
-.step-card:hover .step-icon { transform: scale(1.1); }
+.step-card:hover .step-icon {
+  transform: scale(1.12);
+}
+
+.step-card:hover .step-icon-primary {
+  background: rgba(255, 52, 205, 0.22);
+  border-color: var(--primary);
+  box-shadow: 0 12px 28px -6px rgba(255, 52, 205, 0.45);
+}
+
+.step-card:hover .step-icon-secondary {
+  background: rgba(102, 2, 255, 0.22);
+  border-color: var(--secondary);
+  box-shadow: 0 12px 28px -6px rgba(102, 2, 255, 0.45);
+}
+
+.step-card:hover .step-icon-tertiary {
+  background: rgba(209, 125, 0, 0.22);
+  border-color: var(--tertiary);
+  box-shadow: 0 12px 28px -6px rgba(255, 184, 111, 0.4);
+}
 
 .step-icon .material-symbols-outlined { font-size: 2.25rem; }
 .step-icon-primary { border: 1px solid rgba(255, 174, 222, 0.3); color: var(--primary); }
@@ -675,6 +718,16 @@ main {
   border: 1px solid var(--outline-variant);
   color: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  cursor: default;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.theme-chip:hover {
+  background: var(--gradient-cta);
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 8px 20px -4px rgba(255, 52, 205, 0.45);
 }
 
 .theme-chip .material-symbols-outlined {
@@ -779,7 +832,7 @@ main {
   display: block;
   margin: 0 auto 0.75rem;
   height: auto;
-  max-height: 32px;
+  max-height: 44px;
   opacity: 0.85;
 }
 
@@ -855,4 +908,7 @@ main {
 
 @media (max-width: 767px) {
   .phone-frame { max-width: 18rem; }
+  .brand img { max-height: 48px; }
+  .header-nav a { font-size: 0.8rem; }
+  .header-actions { gap: 0.75rem; }
 }
