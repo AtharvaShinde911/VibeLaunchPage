@@ -52,6 +52,29 @@ In MongoDB Atlas:
 
 The collection is created automatically on the first form submission.
 
+## Service email notifications
+
+After a request is saved, the server emails `SERVICE_EMAIL` (default: `support@spartacantech.com`) with the phone number, reason, and request ID.
+
+Add SMTP settings to `.env`:
+
+```bash
+SERVICE_EMAIL=support@spartacantech.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=support@spartacantech.com
+SMTP_PASS=your-app-password
+SMTP_FROM="Vibzee Website <support@spartacantech.com>"
+```
+
+For Gmail or Google Workspace:
+
+1. Turn on 2-Step Verification for the sending account.
+2. Create an [App Password](https://myaccount.google.com/apppasswords).
+3. Use that 16-character password as `SMTP_PASS` (not the normal mailbox password).
+
+The form still succeeds if email sending fails — MongoDB remains the source of truth. Check the server logs if a notification does not arrive.
+
 ## API
 
 - `POST /api/delete-account-request` — save a deletion request (no account deletion is performed)
@@ -59,6 +82,6 @@ The collection is created automatically on the first form submission.
 
 ## Deploy
 
-Deploy this project as a Node.js app (Railway, Render, Fly.io, etc.) so both the static site and API run together. Set `MONGODB_URI` in your host's environment variables.
+Deploy this project as a Node.js app (Railway, Render, Fly.io, etc.) so both the static site and API run together. Set `MONGODB_URI` and the SMTP variables in your host's environment variables.
 
 Static-only hosts (e.g. GitHub Pages) cannot run the form API without a separate backend.

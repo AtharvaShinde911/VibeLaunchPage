@@ -1,11 +1,13 @@
 const path = require("path");
 const express = require("express");
+const nodemailer = require("nodemailer");
 const { MongoClient } = require("mongodb");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const PORT = process.env.PORT || 3000;
 const DB_NAME = process.env.MONGODB_DB_NAME || process.env.MONGODB_DB_BACKEND || "vibzee";
 const COLLECTION_NAME = "account_deletion_requests";
+const SERVICE_EMAIL = process.env.SERVICE_EMAIL || "support@spartacantech.com";
 
 function getMongoUri() {
   if (process.env.MONGODB_URI) {
@@ -47,6 +49,75 @@ async function getCollection() {
   }
 
   return mongoClient.db(DB_NAME).collection(COLLECTION_NAME);
+}
+
+function isSmtpConfigured() {
+  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
+function getMailer() {
+  if (!isSmtpConfigured()) {
+    return null;
+  }
+
+  const port = Number(process.env.SMTP_PORT || 587);
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: process.env.SMTP_SECURE === "true" || port === 465,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function notifyServiceEmail({ phone, reason, requestId, createdAt }) {
+  const transporter = getMailer();
+  if (!transporter) {
+    console.warn("SMTP is not configured. Skipping service notification email.");
+    return false;
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const submittedAt = new Date(createdAt).toUTCString();
+
+  await transporter.sendMail({
+    from,
+    to: SERVICE_EMAIL,
+    subject: `Account deletion request — ${phone}`,
+    text: [
+      "A new account deletion request was submitted on the Vibzee website.",
+      "",
+      `Phone: ${phone}`,
+      `Reason: ${reason}`,
+      `Request ID: ${requestId}`,
+      `Submitted at: ${submittedAt}`,
+      "",
+      "This is a notification only. The request has been saved for manual review. No account has been deleted.",
+    ].join("\n"),
+    html: `
+      <p>A new account deletion request was submitted on the Vibzee website.</p>
+      <ul>
+        <li><strong>Phone:</strong> ${escapeHtml(phone)}</li>
+        <li><strong>Reason:</strong> ${escapeHtml(reason)}</li>
+        <li><strong>Request ID:</strong> ${escapeHtml(String(requestId))}</li>
+        <li><strong>Submitted at:</strong> ${escapeHtml(submittedAt)}</li>
+      </ul>
+      <p>This is a notification only. The request has been saved for manual review. No account has been deleted.</p>
+    `,
+  });
+
+  return true;
 }
 
 function normalizePhone(value) {
@@ -91,6 +162,17 @@ app.post("/api/delete-account-request", async (req, res) => {
 
     const result = await collection.insertOne(document);
 
+    try {
+      await notifyServiceEmail({
+        phone: validated.phone,
+        reason: validated.reason,
+        requestId: result.insertedId,
+        createdAt: document.createdAt,
+      });
+    } catch (emailError) {
+      console.error("Service notification email failed:", emailError.message);
+    }
+
     return res.status(201).json({
       ok: true,
       message: "Your deletion request has been received and saved. Our team will review it and process account deletion manually. Your account is not deleted automatically.",
@@ -131,5 +213,10 @@ app.listen(PORT, () => {
   console.log(`Vibzee site running at http://localhost:${PORT}`);
   if (!MONGODB_URI) {
     console.warn("Warning: MONGODB_URI is not set. Form submissions will fail until configured.");
+  }
+  if (!isSmtpConfigured()) {
+    console.warn("Warning: SMTP is not set. Deletion requests will be saved, but no service email will be sent.");
+  } else {
+    console.log(`Service notification email: ${SERVICE_EMAIL}`);
   }
 });
