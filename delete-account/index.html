@@ -80,8 +80,11 @@
     </div>
   </div>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function () {
+      emailjs.init({ publicKey: 'cPvLgCSv1FKSFFWwK' });
+
       const form = document.getElementById('delete-account-form');
       const message = document.getElementById('form-message');
       const submitBtn = document.getElementById('delete-account-submit');
@@ -151,11 +154,30 @@
             throw new Error(data.error || 'Unable to submit your request. Please try again.');
           }
 
+          try {
+            await emailjs.send('service_vq8h1dp', 'template_66ei7qd', {
+              name: data.phone,
+              email: data.phone,
+              phone: data.phone,
+              reason: data.reason,
+              time: new Date().toLocaleString(),
+            });
+          } catch (emailError) {
+            console.error('EmailJS notification failed:', emailError);
+            message.textContent = 'Your request was saved, but we could not send the notification email. Please email support@spartacantech.com if needed.';
+            message.className = 'form-message form-message-error';
+            openSuccessModal(data.message || 'Your deletion request has been received and saved.');
+            form.reset();
+            return;
+          }
+
+          message.textContent = "Deletion request submitted. We'll process it shortly.";
+          message.className = 'form-message form-message-success';
           form.reset();
           openSuccessModal(data.message || 'Your deletion request has been received and saved.');
         } catch (error) {
           message.textContent = error.message || 'Unable to submit your request. Please email support@spartacantech.com.';
-          message.classList.add('form-message-error');
+          message.className = 'form-message form-message-error';
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit deletion request';

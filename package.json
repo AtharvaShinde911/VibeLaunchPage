@@ -5,7 +5,7 @@
   "description": "Vibzee marketing site with account deletion API",
   "scripts": {
     "start": "node api/server.js",
-    "dev": "node --watch api/server.js"
+    "dev": "SITE_PORT=3000 node --watch api/server.js"
   },
   "engines": {
     "node": ">=18"

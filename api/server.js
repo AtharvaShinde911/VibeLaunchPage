@@ -4,7 +4,8 @@ const nodemailer = require("nodemailer");
 const { MongoClient } = require("mongodb");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
-const PORT = process.env.PORT || 3000;
+// SITE_PORT wins so a shell PORT=8081 from Metro does not bind this site.
+const PORT = Number(process.env.SITE_PORT || process.env.PORT || 3000);
 const DB_NAME = process.env.MONGODB_DB_NAME || process.env.MONGODB_DB_BACKEND || "vibzee";
 const COLLECTION_NAME = "account_deletion_requests";
 const SERVICE_EMAIL = process.env.SERVICE_EMAIL || "support@spartacantech.com";
@@ -177,6 +178,8 @@ app.post("/api/delete-account-request", async (req, res) => {
       ok: true,
       message: "Your deletion request has been received and saved. Our team will review it and process account deletion manually. Your account is not deleted automatically.",
       requestId: result.insertedId,
+      phone: document.phone,
+      reason: document.reason,
     });
   } catch (error) {
     console.error("Delete account request failed:", error.message);
@@ -209,7 +212,7 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Vibzee site running at http://localhost:${PORT}`);
   if (!MONGODB_URI) {
     console.warn("Warning: MONGODB_URI is not set. Form submissions will fail until configured.");
@@ -219,4 +222,12 @@ app.listen(PORT, () => {
   } else {
     console.log(`Service notification email: ${SERVICE_EMAIL}`);
   }
+});
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use. Set SITE_PORT in .env to a free port, then restart.`);
+    process.exit(1);
+  }
+  throw error;
 });
