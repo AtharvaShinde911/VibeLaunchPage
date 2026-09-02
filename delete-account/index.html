@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Delete Account — Vibzee</title>
   <meta name="description" content="How to request deletion of your Vibzee mobile app account." />
+  <meta name="theme-color" content="#12121d" />
   <link rel="stylesheet" href="../assets/site.css" />
   <link rel="icon" href="../assets/vibzee-icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="../assets/vibzee-icon.png" />
@@ -16,12 +17,17 @@
   <header class="site-header glass-header">
     <a class="brand" href="../"><img src="../assets/vibzee-logo.png" alt="Vibzee" width="176" height="72" /></a>
     <div class="header-actions">
-      <nav class="header-nav" aria-label="Legal">
+      <nav class="header-nav" id="header-nav" aria-label="Legal">
         <a href="../privacy/">Privacy Policy</a>
         <a href="../terms/">Terms of Service</a>
         <a href="../delete-account/" aria-current="page">Delete Account</a>
       </nav>
-      <a class="btn btn-gradient btn-sm" href="https://play.google.com/store/apps/details?id=com.vibzee" target="_blank" rel="noopener noreferrer">Get the App</a>
+      <a class="btn btn-gradient btn-sm header-cta" href="https://play.google.com/store/apps/details?id=com.vibzee" target="_blank" rel="noopener noreferrer">Get the App</a>
+      <button type="button" class="nav-toggle" aria-controls="header-nav" aria-expanded="false" aria-label="Open menu">
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
     </div>
   </header>
   <main class="legal">
@@ -79,7 +85,7 @@
       <button class="btn btn-gradient" type="button" id="success-modal-close">OK</button>
     </div>
   </div>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script src="../assets/site.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function () {
