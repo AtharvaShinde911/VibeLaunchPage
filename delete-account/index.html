@@ -89,8 +89,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function () {
-      emailjs.init({ publicKey: 'cPvLgCSv1FKSFFWwK' });
-
       const form = document.getElementById('delete-account-form');
       const message = document.getElementById('form-message');
       const submitBtn = document.getElementById('delete-account-submit');
@@ -98,6 +96,27 @@
       const modalBody = document.getElementById('success-modal-body');
       const modalClose = document.getElementById('success-modal-close');
       let lastFocus = null;
+      let emailjsConfigPromise = null;
+
+      function getEmailjsConfig() {
+        if (!emailjsConfigPromise) {
+          emailjsConfigPromise = fetch('/api/emailjs-config')
+            .then(function (response) {
+              return response.json().then(function (data) {
+                return { ok: response.ok, data: data };
+              });
+            })
+            .then(function (result) {
+              const data = result.data || {};
+              if (!result.ok || !data.publicKey || !data.serviceId || !data.templateId) {
+                throw new Error(data.error || 'EmailJS is not configured.');
+              }
+              emailjs.init({ publicKey: data.publicKey });
+              return data;
+            });
+        }
+        return emailjsConfigPromise;
+      }
 
       function openSuccessModal(text) {
         lastFocus = document.activeElement;
@@ -161,7 +180,8 @@
           }
 
           try {
-            await emailjs.send('service_vq8h1dp', 'template_66ei7qd', {
+            const emailjsConfig = await getEmailjsConfig();
+            await emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, {
               name: data.phone,
               email: data.phone,
               phone: data.phone,

@@ -190,6 +190,26 @@ app.post("/api/delete-account-request", async (req, res) => {
   }
 });
 
+app.get("/api/emailjs-config", (_req, res) => {
+  const publicKey = process.env.YOUR_PUBLIC_KEY;
+  const serviceId = process.env.YOUR_SERVICE_ID;
+  const templateId = process.env.YOUR_TEMPLATE_ID;
+
+  if (!publicKey || !serviceId || !templateId) {
+    return res.status(503).json({
+      ok: false,
+      error: "EmailJS is not configured.",
+    });
+  }
+
+  return res.json({
+    ok: true,
+    publicKey,
+    serviceId,
+    templateId,
+  });
+});
+
 app.get("/api/health", async (_req, res) => {
   try {
     if (!MONGODB_URI) {
