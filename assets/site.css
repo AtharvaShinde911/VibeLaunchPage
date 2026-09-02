@@ -615,6 +615,36 @@ main {
   outline-offset: 0;
 }
 
+.demo-edited-post {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: auto;
+  height: auto;
+  background: #d9d9d9;
+}
+
+.demo-edited-post > img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 18%;
+  opacity: 1;
+  transform: none;
+}
+
+.post-username {
+  margin: 0;
+  padding: 0.55rem 0.75rem 0.65rem;
+  background: #d9d9d9;
+  color: #1a3a8f;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-align: center;
+  line-height: 1.2;
+}
+
 .template-placeholder {
   position: absolute;
   inset: 0;
