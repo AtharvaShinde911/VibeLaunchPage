@@ -107,6 +107,39 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--surface-variant);
 }
 
+.brand {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  isolation: isolate;
+}
+
+.brand::before {
+  content: "";
+  position: absolute;
+  left: -28%;
+  right: -28%;
+  top: -10%;
+  bottom: -6%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 174, 222, 0.16) 0%,
+    rgba(255, 52, 205, 0.08) 45%,
+    transparent 72%
+  );
+  filter: blur(22px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.brand img,
+.hero-logo-desktop,
+.footer-logo {
+  filter:
+    drop-shadow(0 0 18px rgba(255, 174, 222, 0.28))
+    drop-shadow(0 0 36px rgba(255, 52, 205, 0.16));
+}
+
 .brand img {
   display: block;
   height: auto;
@@ -297,7 +330,6 @@ main {
   max-width: 176px;
   height: auto;
   margin-bottom: 1.5rem;
-  filter: drop-shadow(0 4px 16px rgba(255, 52, 205, 0.2));
 }
 
 .hero-copy h1 {
@@ -1062,7 +1094,6 @@ body.modal-open {
   margin: 0 auto 0.75rem;
   height: auto;
   max-height: 44px;
-  opacity: 0.85;
 }
 
 .footer-nav {
